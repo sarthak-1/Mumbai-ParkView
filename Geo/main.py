@@ -42,15 +42,10 @@ mumbai_map = folium.Map(
 )
 
 # Added the base tile layer manually with control = False
-folium.TileLayer(
-    tiles="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-    attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>',
-    name="OSM HOT",
-    control=False,
-    min_zoom=10,
+folium.TileLayer("Cartodb Positron", control=False,
+    min_zoom=12,
     max_zoom=17,
-    bounds=mmr_bounds
-).add_to(mumbai_map)
+    bounds=mmr_bounds).add_to(mumbai_map)
 
 # 4. Add Suburb Markers
 
