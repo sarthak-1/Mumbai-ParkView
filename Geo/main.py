@@ -42,12 +42,15 @@ mumbai_map = folium.Map(
 )
 
 # Added the base tile layer manually with control = False
-folium.TileLayer("Cartodb Positron", control=False,
-    min_zoom=12,
+folium.TileLayer(
+    tiles="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>',
+    name="OSM HOT",
+    control=False,
+    min_zoom=10,
     max_zoom=17,
-    bounds=mmr_bounds).add_to(mumbai_map)
-
-
+    bounds=mmr_bounds
+).add_to(mumbai_map)
 
 # 4. Add Suburb Markers
 
@@ -92,9 +95,8 @@ custom_css = """
 mumbai_map.get_root().html.add_child(folium.Element(custom_css))
 
 # 7. Add the Lag-Free Clustered Parks (Set show=True or show=False for default state)
-marker_cluster = MarkerCluster(name="Parks & Gardens", show=True).add_to(
-    mumbai_map
-)
+
+marker_cluster = MarkerCluster(name="Parks & Gardens", show=True).add_to(mumbai_map)
 print("Loading and clustering parks data. This might take a few seconds...")
 
 with open(geojson_path, "r", encoding="utf-8") as f:
@@ -125,6 +127,17 @@ for feature in geo_data.get("features", []):
         continue
 
     if lat is not None and lon is not None:
+        # Build HTML content for popup from all properties in GeoJSON
+        popup_html = "<div style='font-family: Arial; font-size: 12px; max-height: 200px; overflow-y: auto;'>"
+        popup_html += f"<b>{park_name}</b><hr style='margin: 4px 0;'/>"
+        
+        for key, val in props.items():
+            if key != "name" and val:  # Skip name (already displayed) and empty values
+                clean_key = key.replace("_", " ").title()
+                popup_html += f"<b>{clean_key}:</b> {val}<br/>"
+                
+        popup_html += "</div>"
+
         folium.CircleMarker(
             location=[lat, lon],
             radius=4,
@@ -133,6 +146,7 @@ for feature in geo_data.get("features", []):
             fill_color="#39FF14",
             fill_opacity=0.6,
             tooltip=park_name,
+            popup=folium.Popup(popup_html, max_width=250),
         ).add_to(marker_cluster)
         count += 1
 
