@@ -47,7 +47,7 @@ folium.TileLayer(
     attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>',
     name="OSM HOT",
     control=False,
-    min_zoom=9,
+    min_zoom=10,
     max_zoom=17,
     bounds=mmr_bounds
 ).add_to(mumbai_map)
